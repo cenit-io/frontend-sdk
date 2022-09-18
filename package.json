@@ -1,0 +1,25 @@
+{
+  "name": "cenit-frontend-sdk",
+  "version": "1.0.0",
+  "description": "## Introduction",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cenit-io/frontend-sdk.git"
+  },
+  "author": "yoandrypa@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cenit-io/frontend-sdk/issues"
+  },
+  "homepage": "https://github.com/cenit-io/frontend-sdk#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "axios-token-interceptor": "^0.2.0",
+    "lz-string": "^1.4.4",
+    "uuid": "^9.0.0"
+  }
+}

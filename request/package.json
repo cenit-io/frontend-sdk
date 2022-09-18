@@ -1,0 +1,6 @@
+{
+  "name": "cenit-frontend-sdk/request",
+  "main": "../src/utils/request.js",
+  "module": "../src/utils/request.js",
+  "sideEffects": false
+}

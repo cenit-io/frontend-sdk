@@ -1,0 +1,6 @@
+{
+  "name": "cenit-frontend-sdk/embeded",
+  "main": "../src/embeded/index.js",
+  "module": "../src/embeded/index.js",
+  "sideEffects": false
+}
