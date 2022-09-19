@@ -1,7 +1,7 @@
-import axios from "axios";
-import tokenProvider from "axios-token-interceptor";
+import axios from 'axios';
+import tokenProvider from 'axios-token-interceptor';
 
-import session from "./session";
+import session from './session';
 
 const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_OAUTH_CLIENT_SECRET;
@@ -14,7 +14,7 @@ axios.defaults.baseURL = serverBaseUrl;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.put['Content-Type'] = 'application/json';
 
-let axiosInstance = null;
+let globalAxiosInstance = null;
 
 const isObject = (obj) => Object.prototype.toString.call(obj).indexOf('Object') !== -1;
 
@@ -30,8 +30,8 @@ const authenticate = () => {
 
   return authRequest(options)
     .then((response) => {
-      const { created_at, expires_in } = response.data;
-      const accessToken  = { ...response.data, created_at: created_at * 1000, expires_in: expires_in * 1000 };
+      const { created_at: createdAt, expires_in: expiresIn } = response.data;
+      const accessToken = { ...response.data, created_at: createdAt * 1000, expires_in: expiresIn * 1000 };
 
       session.set('credentials', { grant_type: 'refresh_token', refresh_token: response.data.refresh_token });
       session.set('accessToken', accessToken);
@@ -74,28 +74,30 @@ export function toQueryParams(requestData) {
 }
 
 export function getAxiosInstance() {
-  if (axiosInstance) return axiosInstance;
-
-  axiosInstance = axios.create({ timeout: timeoutSpan });
-  axiosInstance.interceptors.request.use(
-    tokenProvider({
-      getToken: tokenProvider.tokenCache(authenticate, {
-        getMaxAge: (response) => response.expires_in,
+  if (!globalAxiosInstance) {
+    globalAxiosInstance = axios.create({ timeout: timeoutSpan });
+    globalAxiosInstance.interceptors.request.use(
+      tokenProvider({
+        getToken: tokenProvider.tokenCache(authenticate, {
+          getMaxAge: (response) => response.expires_in,
+        }),
+        headerFormatter: (response) => `Bearer ${response.access_token}`,
       }),
-      headerFormatter: (response) => `Bearer ${response.access_token}`,
-    }),
-  );
+    );
+  }
 
-  return axiosInstance;
+  return globalAxiosInstance;
 }
 
 export function request(options) {
   const { xTenantId } = session;
   const axiosInstance = getAxiosInstance();
 
+  /* eslint-disable no-param-reassign */
   options.headers = { 'Content-Type': 'application/json', ...options.headers };
   if (!options.method) options.method = options.data ? 'POST' : 'GET';
   if (xTenantId) options.headers['X-Tenant-Id'] = xTenantId;
+  /* eslint-enable no-param-reassign */
 
   return axiosInstance(options);
 }

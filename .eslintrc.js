@@ -8,20 +8,25 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
   ],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 12,
     sourceType: 'module',
+    requireConfigFile: false,
+    babelOptions: {
+      babelrc: false,
+      configFile: false,
+      presets: ["@babel/preset-env"],
+    },
   },
   plugins: [
     'react',
     'import',
   ],
   settings: {
-    'import/parser': 'babel-eslint',
     'import/resolve': {
       moduleDirectory: ['node_modules', 'src'],
     },

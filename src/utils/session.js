@@ -10,20 +10,23 @@ class Session {
   }
 
   get serverBaseUrl() {
-    return process.env.CENIT_BACKEND_BASE_URL || 'https://server.cenit.io';
+    return this.get('cenitHost') || process.env.CENIT_BACKEND_BASE_URL || process.env.REACT_APP_CENIT_HOST;
   }
 
-  get apiBaseUrl() {
-    return `${this.serverBaseUrl}/api/v3`;
+  set serverBaseUrl(value) {
+    this.set('cenitHost', value);
   }
 
   get appBaseUrl() {
     return window.location.href.replace(/\?.*$/, '').replace(/\/$/, '');
   }
 
-  get iFrameDetected() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.has('embedded') || (window !== window.parent);
+  get xTenantId() {
+    return this.get('tenantId');
+  }
+
+  set xTenantId(value) {
+    this.set('tenantId', value);
   }
 
   get(key, defaultValue) {

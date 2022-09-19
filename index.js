@@ -1,7 +1,7 @@
-import request from './src/utils/request';
-import session from './src/utils/session';
-import localStorage from './src/utils/localStorage';
+import _request from './src/utils/request';
+import _session from './src/utils/session';
+import _localStorage from './src/utils/localStorage';
 
-module.exports = request;
-module.exports = session;
-module.exports = localStorage;
+export const request = _request;
+export const session = _session;
+export const localStorage = _localStorage;
