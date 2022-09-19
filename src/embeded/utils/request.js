@@ -1,7 +1,10 @@
 import { v4 as uuid } from 'uuid';
 import session from '../../utils/session';
+import { toQueryParams as _toQueryParams } from '../../utils/request';
 
 const promises = {};
+
+export const toQueryParams = _toQueryParams;
 
 export function request(options) {
   const requestId = uuid();

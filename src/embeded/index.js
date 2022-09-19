@@ -1,7 +1,7 @@
-const request = require('./utils/request');
-const session = require('../utils/session');
-const localStorage = require('../utils/localStorage');
+import _request from './utils/request';
+import _session from '../utils/session';
+import _localStorage from '../utils/localStorage';
 
-module.exports = request;
-module.exports = session;
-module.exports = localStorage;
+export const request = _request;
+export const session = _session;
+export const localStorage = _localStorage;

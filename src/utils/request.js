@@ -73,7 +73,7 @@ export function toQueryParams(requestData) {
   return buildParams('', requestData).join('&');
 }
 
-export function getAxiosInstance() {
+function getAxiosInstance() {
   if (!globalAxiosInstance) {
     globalAxiosInstance = axios.create({ timeout: timeoutSpan });
     globalAxiosInstance.interceptors.request.use(
