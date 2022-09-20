@@ -19,11 +19,8 @@ export function request(options) {
 
 window.addEventListener('message', (event) => {
   const { origin, data: { cmd, error, response, requestId } } = event;
-  const allowOrigin = process.env.REACT_APP_LOCALHOST  || process.env.APP_BASE_URL || 'https://app.cenit.io';
 
-  if (origin !== allowOrigin) return false;
-
-  if (cmd !== 'response') return false;
+  if (cmd !== 'response' || origin !== session.cenitFrontendBaseUrl) return false;
 
   const promise = promises[requestId];
 

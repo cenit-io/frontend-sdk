@@ -13,7 +13,9 @@ class Session {
     return this.get('cenitBackendAppBaseUrl')
       || process.env.CENIT_BACKEND_BASE_URL
       || process.env.REACT_APP_CENIT_BACKEND_BASE_URL
-      || process.env.REACT_APP_CENIT_HOST; // TODO: Deprecate
+      || process.env.REACT_APP_CENIT_HOST // TODO: Deprecate
+      || 'https://backend.cenit.io';
+
   }
 
   set cenitBackendAppBaseUrl(value) {
@@ -40,7 +42,8 @@ class Session {
     return this.get('cenitFrontendBaseUrl')
       || process.env.CENIT_FRONTEND_BASE_URL
       || process.env.REACT_APP_CENIT_FRONTEND_BASE_URL
-      || process.env.REACT_APP_LOCALHOST; // TODO: Deprecate
+      || process.env.REACT_APP_LOCALHOST // TODO: Deprecate
+      || 'https://frontend.cenit.io';
   }
 
   set cenitFrontendBaseUrl(value) {
