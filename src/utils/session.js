@@ -62,6 +62,11 @@ class Session {
     this.set('tenantId', value);
   }
 
+  get iFrameDetected() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.has('embedded') || (window !== window.parent);
+  }
+
   get(key, defaultValue) {
     const item = window.sessionStorage.getItem(LZString.compress(key));
 
