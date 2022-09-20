@@ -9,15 +9,45 @@ class Session {
     return !!this.currentAccount;
   }
 
+  get cenitBackendAppBaseUrl() {
+    return this.get('cenitBackendAppBaseUrl')
+      || process.env.CENIT_BACKEND_BASE_URL
+      || process.env.REACT_APP_CENIT_BACKEND_BASE_URL
+      || process.env.REACT_APP_CENIT_HOST; // TODO: Deprecate
+  }
+
+  set cenitBackendAppBaseUrl(value) {
+    this.set('cenitBackendAppBaseUrl', value);
+  }
+
+  /**
+   * TODO: Deprecate, use cenitBackendAppBaseUrl
+   * @returns {*}
+   */
   get serverBaseUrl() {
-    return this.get('cenitHost') || process.env.CENIT_BACKEND_BASE_URL || process.env.REACT_APP_CENIT_HOST;
+    return this.cenitBackendAppBaseUrl
   }
 
+  /**
+   * TODO: Deprecate, use cenitBackendAppBaseUrl
+   * @param value
+   */
   set serverBaseUrl(value) {
-    this.set('cenitHost', value);
+    this.cenitBackendAppBaseUrl = value;
   }
 
-  get appBaseUrl() {
+  get cenitFrontendBaseUrl() {
+    return this.get('cenitFrontendBaseUrl')
+      || process.env.CENIT_FRONTEND_BASE_URL
+      || process.env.REACT_APP_CENIT_FRONTEND_BASE_URL
+      || process.env.REACT_APP_LOCALHOST; // TODO: Deprecate
+  }
+
+  set cenitFrontendBaseUrl(value) {
+    this.set('cenitFrontendBaseUrl', value);
+  }
+
+  get currentAppBaseUrl() {
     return window.location.href.replace(/\?.*$/, '').replace(/\/$/, '');
   }
 

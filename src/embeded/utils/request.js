@@ -19,14 +19,9 @@ export function request(options) {
 
 window.addEventListener('message', (event) => {
   const { origin, data: { cmd, error, response, requestId } } = event;
+  const allowOrigin = process.env.REACT_APP_LOCALHOST  || process.env.APP_BASE_URL || 'https://app.cenit.io';
 
-  const allowOrigin = process.env.CENIT_FRONTEND_BASE_URL || process.env.REACT_APP_LOCALHOST || 'https://app.cenit.io';
-
-  if (origin !== allowOrigin) {
-    // eslint-disable-next-line no-console
-    console.error(`Invalid source expected '${allowOrigin}' and found '${origin}'.`);
-    return false;
-  }
+  if (origin !== allowOrigin) return false;
 
   if (cmd !== 'response') return false;
 
