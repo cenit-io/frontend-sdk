@@ -7,10 +7,10 @@ const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_OAUTH_CLIENT_SECRET;
 const timeoutSpan = +process.env.REACT_APP_TIMEOUT_SPAN;
 
-const { cenitBackendAppBaseUrl } = session;
+const { cenitBackendBaseUrl } = session;
 window.session = session;
 
-axios.defaults.baseURL = cenitBackendAppBaseUrl;
+axios.defaults.baseURL = cenitBackendBaseUrl;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.put['Content-Type'] = 'application/json';
 
@@ -26,7 +26,7 @@ const authenticate = () => {
   };
 
   const authRequest = axios.create();
-  const options = { url: `${cenitBackendAppBaseUrl}/oauth/token`, method: 'POST', data: credentials };
+  const options = { url: `${cenitBackendBaseUrl}/oauth/token`, method: 'POST', data: credentials };
 
   return authRequest(options)
     .then((response) => {
