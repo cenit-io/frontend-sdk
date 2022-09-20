@@ -112,12 +112,12 @@ export function getCurrentAccount() {
   });
 }
 
-export function authorize(sacope = null) {
+export function authorize(scope = null) {
   const data = {
     client_id: clientId,
     client_secret: clientSecret,
     response_type: 'code',
-    scope: sacope || 'openid profile email offline_access session_access multi_tenant create read update delete digest',
+    scope: scope || 'openid profile email offline_access session_access multi_tenant create read update delete digest',
     redirect_uri: session.currentAppBaseUrl,
   };
 
