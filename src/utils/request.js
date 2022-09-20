@@ -3,12 +3,11 @@ import tokenProvider from 'axios-token-interceptor';
 
 import session from './session';
 
-const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID;
-const clientSecret = process.env.REACT_APP_OAUTH_CLIENT_SECRET;
-const timeoutSpan = +process.env.REACT_APP_TIMEOUT_SPAN;
+const clientId = process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIENT_ID;
+const clientSecret = process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
+const timeoutSpan = +(process.env.TIMEOUT_SPAN || process.env.REACT_APP_TIMEOUT_SPAN);
 
 const { cenitBackendBaseUrl } = session;
-window.session = session;
 
 axios.defaults.baseURL = cenitBackendBaseUrl;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -18,7 +17,7 @@ let globalAxiosInstance = null;
 
 const isObject = (obj) => Object.prototype.toString.call(obj).indexOf('Object') !== -1;
 
-const authenticate = () => {
+function authenticate() {
   const credentials = {
     ...session.get('credentials'),
     client_id: clientId,
@@ -41,7 +40,23 @@ const authenticate = () => {
       session.clear();
       throw Error(err.response ? err.response.data.error_description || err.response.data.error : err.message);
     });
-};
+}
+
+function getAxiosInstance() {
+  if (!globalAxiosInstance) {
+    globalAxiosInstance = axios.create({ timeout: timeoutSpan });
+    globalAxiosInstance.interceptors.request.use(
+      tokenProvider({
+        getToken: tokenProvider.tokenCache(authenticate, {
+          getMaxAge: (response) => response.expires_in,
+        }),
+        headerFormatter: (response) => `Bearer ${response.access_token}`,
+      }),
+    );
+  }
+
+  return globalAxiosInstance;
+}
 
 export function toQueryParams(requestData) {
   const qs = [];
@@ -73,22 +88,6 @@ export function toQueryParams(requestData) {
   return buildParams('', requestData).join('&');
 }
 
-function getAxiosInstance() {
-  if (!globalAxiosInstance) {
-    globalAxiosInstance = axios.create({ timeout: timeoutSpan });
-    globalAxiosInstance.interceptors.request.use(
-      tokenProvider({
-        getToken: tokenProvider.tokenCache(authenticate, {
-          getMaxAge: (response) => response.expires_in,
-        }),
-        headerFormatter: (response) => `Bearer ${response.access_token}`,
-      }),
-    );
-  }
-
-  return globalAxiosInstance;
-}
-
 export function request(options) {
   const { xTenantId } = session;
   const axiosInstance = getAxiosInstance();
@@ -101,5 +100,38 @@ export function request(options) {
 
   return axiosInstance(options);
 }
+
+export function apiRequest(options) {
+  return request({ ...options, url: `/api/v3/${options.url}` });
+}
+
+export function getCurrentAccount() {
+  return apiRequest({ url: 'setup/user/me' }).then(({ data: account }) => {
+    session.set('account', account);
+    return account;
+  });
+}
+
+export function authorize(sacope = null) {
+  const data = {
+    client_id: clientId,
+    client_secret: clientSecret,
+    response_type: 'code',
+    scope: sacope || 'openid profile email offline_access session_access multi_tenant create read update delete digest',
+    redirect_uri: session.currentAppBaseUrl,
+  };
+
+  window.location.href = `${cenitBackendBaseUrl}/oauth/authorize?${toQueryParams(data)}`;
+}
+
+export const authWithAuthCode = (authCode) => {
+  session.set('credentials', {
+    grant_type: 'authorization_code',
+    redirect_uri: session.currentAppBaseUrl,
+    code: authCode,
+  });
+
+  return getCurrentAccount().then(() => session.get('accessToken'));
+};
 
 export default request;

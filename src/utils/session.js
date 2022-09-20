@@ -15,7 +15,6 @@ class Session {
       || process.env.REACT_APP_CENIT_BACKEND_BASE_URL
       || process.env.REACT_APP_CENIT_HOST // TODO: Deprecate
       || 'https://backend.cenit.io';
-
   }
 
   set cenitBackendBaseUrl(value) {
@@ -27,7 +26,7 @@ class Session {
    * @returns {*}
    */
   get serverBaseUrl() {
-    return this.cenitBackendBaseUrl
+    return this.cenitBackendBaseUrl;
   }
 
   /**
