@@ -89,6 +89,5 @@ class Session {
   }
 }
 
-const session = new Session();
-
+export const session = new Session();
 export default session;

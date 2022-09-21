@@ -37,6 +37,5 @@ class Local {
   }
 }
 
-const local = new Local();
-
+export const local = new Local();
 export default local;
