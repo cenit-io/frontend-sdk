@@ -112,6 +112,16 @@ export function getCurrentAccount() {
   });
 }
 
+export function loadItemId(type, criteria) {
+  const options = {
+    url: `setup/${type}`,
+    method: 'GET',
+    params: { ...criteria, only: 'id', limit: 1 },
+  };
+
+  return apiRequest(options).then(({ data: { count, items } }) => ((count !== 0) ? items[0].id : null));
+}
+
 export function authorize(scope = null) {
   const data = {
     client_id: clientId,
