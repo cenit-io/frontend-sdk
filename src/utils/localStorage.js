@@ -37,5 +37,5 @@ class Local {
   }
 }
 
-export const local = new Local();
-export default local;
+export const localStorage = new Local();
+export default localStorage;
