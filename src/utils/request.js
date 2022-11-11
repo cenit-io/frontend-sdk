@@ -7,9 +7,6 @@ const clientId = process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIE
 const clientSecret = process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
 const timeoutSpan = +(process.env.TIMEOUT_SPAN || process.env.REACT_APP_TIMEOUT_SPAN);
 
-const { cenitBackendBaseUrl } = session;
-
-axios.defaults.baseURL = cenitBackendBaseUrl;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.put['Content-Type'] = 'application/json';
 
@@ -25,7 +22,7 @@ function authenticate() {
   };
 
   const authRequest = axios.create();
-  const options = { url: `${cenitBackendBaseUrl}/oauth/token`, method: 'POST', data: credentials };
+  const options = { url: `${session.cenitBackendBaseUrl}/oauth/token`, method: 'POST', data: credentials };
 
   return authRequest(options)
     .then((response) => {
@@ -44,6 +41,8 @@ function authenticate() {
 
 function getAxiosInstance() {
   if (!globalAxiosInstance) {
+    axios.defaults.baseURL = session.cenitBackendBaseUrl;
+
     globalAxiosInstance = axios.create({ timeout: timeoutSpan });
     globalAxiosInstance.interceptors.request.use(
       tokenProvider({
@@ -131,7 +130,7 @@ export function authorize(scope = null) {
     redirect_uri: session.currentAppBaseUrl,
   };
 
-  window.location.href = `${cenitBackendBaseUrl}/oauth/authorize?${toQueryParams(data)}`;
+  window.location.href = `${session.cenitBackendBaseUrl}/oauth/authorize?${toQueryParams(data)}`;
 }
 
 export const authWithAuthCode = (authCode) => {
