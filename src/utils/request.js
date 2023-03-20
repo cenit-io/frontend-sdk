@@ -72,8 +72,8 @@ export function toQueryParams(requestData) {
   const qs = [];
   const add = (key, value) => {
     let v = typeof value === 'function' ? value() : value;
-    v = v === null || v === undefined ? '' : v;
-    qs[qs.length] = `${encodeURIComponent(key)}=${encodeURIComponent(v)}`;
+    v = v === null ? '' : v;
+    if (v !== undefined) qs[qs.length] = `${encodeURIComponent(key)}=${encodeURIComponent(v)}`;
   };
 
   const buildParams = (prefix, data) => {
