@@ -9,10 +9,19 @@ axios.defaults.headers.put['Content-Type'] = 'application/json';
 let globalAxiosInstance = null;
 
 const isObject = (obj) => Object.prototype.toString.call(obj).indexOf('Object') !== -1;
-
 const clientId = () => process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIENT_ID;
 const clientSecret = () => process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
-const authorizeUrl = () => process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL || `${session.cenitBackendBaseUrl}/oauth/authorize`;
+
+const authorizeUrl = () => {
+  const oauthUrl = process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL;
+
+  if (oauthUrl) return oauthUrl;
+  if (clientId()) return `${session.cenitBackendBaseUrl}/oauth/authorize`;
+
+  const appIdentifier = process.env.APP_ID || process.env.REACT_APP_APP_ID;
+
+  return `${session.cenitBackendBaseUrl}/app/${appIdentifier}/authorize`;
+}
 
 function authenticate() {
   const credentials = {
