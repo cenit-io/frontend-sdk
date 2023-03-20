@@ -3,10 +3,6 @@ import tokenProvider from 'axios-token-interceptor';
 
 import session from './session';
 
-const clientId = process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIENT_ID;
-const clientSecret = process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
-const timeoutSpan = +(process.env.TIMEOUT_SPAN || process.env.REACT_APP_TIMEOUT_SPAN);
-
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.put['Content-Type'] = 'application/json';
 
@@ -14,11 +10,15 @@ let globalAxiosInstance = null;
 
 const isObject = (obj) => Object.prototype.toString.call(obj).indexOf('Object') !== -1;
 
+const clientId = () => process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIENT_ID;
+const clientSecret = () => process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
+const authorizeUrl = () => process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL || `${session.cenitBackendBaseUrl}/oauth/authorize`;
+
 function authenticate() {
   const credentials = {
     ...session.get('credentials'),
-    client_id: clientId,
-    client_secret: clientSecret,
+    client_id: clientId(),
+    client_secret: clientSecret(),
   };
 
   const authRequest = axios.create();
@@ -41,6 +41,8 @@ function authenticate() {
 
 function getAxiosInstance() {
   if (!globalAxiosInstance) {
+    const timeoutSpan = +(process.env.TIMEOUT_SPAN || process.env.REACT_APP_TIMEOUT_SPAN);
+
     axios.defaults.baseURL = session.cenitBackendBaseUrl;
 
     globalAxiosInstance = axios.create({ timeout: timeoutSpan });
@@ -123,14 +125,14 @@ export function loadItemId(type, criteria) {
 
 export function authorize(scope = null) {
   const data = {
-    client_id: clientId,
-    client_secret: clientSecret,
+    client_id: clientId(),
+    client_secret: clientSecret(),
     response_type: 'code',
     scope: scope || 'openid profile email offline_access session_access multi_tenant create read update delete digest',
     redirect_uri: session.currentAppBaseUrl,
   };
 
-  window.location.href = `${session.cenitBackendBaseUrl}/oauth/authorize?${toQueryParams(data)}`;
+  window.location.href = `${authorizeUrl()}?${toQueryParams(data)}`;
 }
 
 export const authWithAuthCode = (authCode) => {
