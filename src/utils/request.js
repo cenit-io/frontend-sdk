@@ -11,6 +11,7 @@ let globalAxiosInstance = null;
 const isObject = (obj) => Object.prototype.toString.call(obj).indexOf('Object') !== -1;
 const clientId = () => process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIENT_ID;
 const clientSecret = () => process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
+const appIdentifier = () => process.env.APP_ID || process.env.REACT_APP_APP_ID;
 
 const authorizeUrl = () => {
   const oauthUrl = process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL;
@@ -18,9 +19,16 @@ const authorizeUrl = () => {
   if (oauthUrl) return oauthUrl;
   if (clientId()) return `${session.cenitBackendBaseUrl}/oauth/authorize`;
 
-  const appIdentifier = process.env.APP_ID || process.env.REACT_APP_APP_ID;
+  return `${session.cenitBackendBaseUrl}/app/${appIdentifier()}/authorize`;
+}
 
-  return `${session.cenitBackendBaseUrl}/app/${appIdentifier}/authorize`;
+const tokenUrl = () => {
+  const url = process.env.OAUTH_TOKEN_URL || process.env.REACT_APP_OAUTH_TOKEN_URL;
+
+  if (url) return url;
+  if (clientId()) return `${session.cenitBackendBaseUrl}/oauth/token`;
+
+  return `${session.cenitBackendBaseUrl}/app/${appIdentifier()}/token`;
 }
 
 function authenticate() {
@@ -31,7 +39,7 @@ function authenticate() {
   };
 
   const authRequest = axios.create();
-  const options = { url: `${session.cenitBackendBaseUrl}/oauth/token`, method: 'POST', data: credentials };
+  const options = { url: tokenUrl(), method: 'POST', data: credentials };
 
   return authRequest(options)
     .then((response) => {
