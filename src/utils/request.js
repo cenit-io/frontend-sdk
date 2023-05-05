@@ -9,15 +9,13 @@ axios.defaults.headers.put['Content-Type'] = 'application/json';
 let globalAxiosInstance = null;
 
 const isObject = (obj) => Object.prototype.toString.call(obj).indexOf('Object') !== -1;
-const clientId = () => process.env.OAUTH_CLIENT_ID || process.env.REACT_APP_OAUTH_CLIENT_ID;
-const clientSecret = () => process.env.OAUTH_CLIENT_SECRET || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
 const appIdentifier = () => process.env.APP_ID || process.env.REACT_APP_APP_ID;
 
 const authorizeUrl = () => {
   const oauthUrl = process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL;
 
   if (oauthUrl) return oauthUrl;
-  if (clientId()) return `${session.cenitBackendBaseUrl}/oauth/authorize`;
+  if (session.clientId()) return `${session.cenitBackendBaseUrl}/oauth/authorize`;
 
   return `${session.cenitBackendBaseUrl}/app/${appIdentifier()}/authorize`;
 }
@@ -26,7 +24,7 @@ const tokenUrl = () => {
   const url = process.env.OAUTH_TOKEN_URL || process.env.REACT_APP_OAUTH_TOKEN_URL;
 
   if (url) return url;
-  if (clientId()) return `${session.cenitBackendBaseUrl}/oauth/token`;
+  if (session.clientId()) return `${session.cenitBackendBaseUrl}/oauth/token`;
 
   return `${session.cenitBackendBaseUrl}/app/${appIdentifier()}/token`;
 }
@@ -34,8 +32,8 @@ const tokenUrl = () => {
 function authenticate() {
   const credentials = {
     ...session.get('credentials'),
-    client_id: clientId(),
-    client_secret: clientSecret(),
+    client_id: session.clientId(),
+    client_secret: session.clientSecret(),
   };
 
   const authRequest = axios.create();
@@ -142,8 +140,8 @@ export function loadItemId(type, criteria) {
 
 export function authorize(scope = null) {
   const data = {
-    client_id: clientId(),
-    client_secret: clientSecret(),
+    client_id: session.clientId(),
+    client_secret: session.clientSecret(),
     response_type: 'code',
     scope: scope || 'openid profile email offline_access session_access multi_tenant create read update delete digest',
     redirect_uri: session.currentAppBaseUrl,

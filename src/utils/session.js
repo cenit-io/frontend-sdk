@@ -37,6 +37,18 @@ class Session {
     this.cenitBackendBaseUrl = value;
   }
 
+  get clientId() {
+    return this.get('OAUTH_CLIENT_ID')
+      || process.env.OAUTH_CLIENT_ID
+      || process.env.REACT_APP_OAUTH_CLIENT_ID;
+  }
+
+  get clientSecret() {
+    return this.get('OAUTH_CLIENT_SECRET')
+      || process.env.OAUTH_CLIENT_SECRET
+      || process.env.REACT_APP_OAUTH_CLIENT_SECRET;
+  }
+
   get cenitFrontendBaseUrl() {
     return this.get('cenitFrontendBaseUrl')
       || process.env.CENIT_FRONTEND_BASE_URL
